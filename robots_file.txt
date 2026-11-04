@@ -1,0 +1,5 @@
+# robots.txt for SeedhaHisab.in
+User-agent: *
+Allow: /
+
+Sitemap: https://seedhahisab.in/sitemap.xml
