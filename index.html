@@ -1,6 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- ANTI-FOUC (FLASH OF UNSTYLED CONTENT) ZERO-JANK CONTROLLER -->
+  <style id="anti-fouc-style">
+    /* जब तक पेज और स्टाइल पूरी तरह लोड न हों, तब तक बॉडी को स्मूथ छिपा कर रखें ताकि लेआउट हिला हुआ न दिखे */
+    body {
+      visibility: hidden !important;
+      opacity: 0 !important;
+      transition: opacity 0.22s ease-in-out !important;
+    }
+  </style>
+  <noscript>
+    <style>
+      body { visibility: visible !important; opacity: 1 !important; }
+    </style>
+  </noscript>
+  <script>
+    /* पेज लोड होते ही तुरंत बॉडी को स्मूथली विजिबल कर दें */
+    (function() {
+      function revealBody() {
+        if (!document.body) return;
+        document.body.style.setProperty('visibility', 'visible', 'important');
+        document.body.style.setProperty('opacity', '1', 'important');
+        const s = document.getElementById('anti-fouc-style');
+        if (s) {
+          setTimeout(() => { try { s.remove(); } catch(e){} }, 250);
+        }
+      }
+      if (document.readyState === 'interactive' || document.readyState === 'complete') {
+        revealBody();
+      } else {
+        window.addEventListener('DOMContentLoaded', revealBody);
+        window.addEventListener('load', revealBody);
+      }
+      // Failsafe timer: guarantees body reveals within 800ms even on slow networks
+      setTimeout(revealBody, 800);
+      window.__revealBody = revealBody;
+    })();
+  </script>
+
   <!-- Google tag (gtag.js) GA4 - Official Tracking for SeedhaHisab.in -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZGMMTDH8BY"></script>
   <script>
@@ -963,45 +1001,91 @@
       line-height: 1.65;
     }
 
-    /* DIRECTORY VIEW (140 TOOLS MASTER CATALOG) */
+    /* DIRECTORY VIEW (140 TOOLS MASTER CATALOG) - 100% OVERLAP-FREE & FULLY RESPONSIVE */
     .directory-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 22px;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 20px 24px;
       margin-top: 16px;
+      width: 100%;
+      box-sizing: border-box;
     }
     .dir-group {
-      margin-bottom: 14px;
+      margin-bottom: 18px;
+      min-width: 0; /* CRITICAL: Prevents CSS Grid blowout and horizontal overflow */
+      overflow: hidden;
+      box-sizing: border-box;
+      width: 100%;
     }
     .dir-group h3 {
-      font-size: 14px;
-      font-weight: bold;
+      font-size: 14.5px;
+      font-weight: 700;
       color: #003366;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
       border-bottom: 2px solid #395c82;
-      padding-bottom: 4px;
+      padding-bottom: 5px;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
+      line-height: 1.35;
+      word-wrap: break-word;
     }
     .dir-list {
       list-style: none;
       padding: 0;
+      margin: 0;
+      width: 100%;
     }
     .dir-list li {
-      margin-bottom: 4.5px;
-      display: flex;
-      align-items: baseline;
-      gap: 5px;
+      margin-bottom: 10px;
+      display: block; /* MUST BE BLOCK: Stacks tool title and description vertically to prevent overlap */
+      position: relative;
+      line-height: 1.45;
+      clear: both;
+      width: 100%;
+      box-sizing: border-box;
     }
-    .dir-list a {
-      font-size: 13px;
+    .dir-list li > i.fa-angle-right {
+      display: inline-block;
+      font-size: 10px;
+      color: #99b6d8;
+      margin-right: 6px;
+      vertical-align: 1px;
+    }
+    .dir-list li > a {
+      font-size: 13.5px;
+      font-weight: 600;
       color: #003366;
       text-decoration: none;
+      display: inline;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
     }
-    .dir-list a:hover {
+    .dir-list li > a:hover {
       text-decoration: underline;
       color: #0066cc;
+    }
+    .dir-list li > a strong {
+      font-weight: 700;
+      color: #003366;
+    }
+    .dir-list li > a span {
+      font-size: 12px;
+      font-weight: 500;
+      color: #64748b;
+    }
+    .dir-list li > div {
+      display: block !important;
+      width: 100% !important;
+      margin: 3px 0 8px 16px !important;
+      padding: 0 !important;
+      font-size: 11.5px;
+      color: #64748b;
+      line-height: 1.45;
+      word-break: break-word;
+      overflow-wrap: break-word;
+      clear: both;
+      box-sizing: border-box;
     }
 
     /* SIDEBAR (DYNAMIC ROTATING AD + QUICK SEARCH + OTHER CALCULATORS) */
@@ -6216,6 +6300,29 @@
       padding: 0 !important;
       border: none !important;
       overflow: hidden !important;
+    }
+
+    /* Tablet & Medium Screen Directory Columns (No Squeeze / No Overlap) */
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .directory-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 20px !important;
+      }
+    }
+    @media (max-width: 768px) {
+      .directory-grid {
+        grid-template-columns: 1fr !important;
+        gap: 16px !important;
+      }
+      .dir-list li {
+        margin-bottom: 12px !important;
+      }
+      .dir-list li > a {
+        font-size: 14px !important;
+      }
+      .dir-list li > div {
+        margin: 3px 0 6px 14px !important;
+      }
     }
 </style>
 
@@ -27068,6 +27175,9 @@ const INHOUSE_ADS = {
       calcGST();
       rotateAd();
       navigate(window.location.hash);
+      if (typeof window.__revealBody === 'function') {
+        window.__revealBody();
+      }
     }
 
     if (document.readyState === 'loading') {
